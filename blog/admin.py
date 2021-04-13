@@ -6,11 +6,15 @@ from blog.models import Note
 
 @admin.register(Note)
 class NoteAdmin(admin.ModelAdmin):
-    fields = ('id','title', 'text', 'date_add', 'importance', )
-    list_display = ('title', 'text', 'date_add', 'importance', )
+    list_display = ('id', 'title', 'text', 'date_add', 'importance', 'privacy', 'state', )
+
+    fields = (('title', 'state', ), 'text', ('importance', 'privacy', ), )
+
     readonly_fields = ('date_add', )
-    list_filter = ('date_add', 'importance', )
 
-from django.contrib import admin
+    list_filter = ('importance', 'state', 'privacy')
 
-# Register your models here.
+    def save_model(self, request, obj, form, change):
+        if not hasattr(obj, "author") or not obj.user:
+            obj.author = request.user
+        super().save_model(request, obj, form, change)
