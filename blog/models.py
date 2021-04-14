@@ -9,7 +9,7 @@ class Note(models.Model):
         (2, "Выполнено"),
     )
 
-    author = models.ForeignKey(User, related_name='authors', on_delete=models.PROTECT)
+    author = models.ForeignKey(User, related_name='authors_note', on_delete=models.PROTECT)
     title = models.CharField(max_length=255, verbose_name="Заголовок")
     text = models.TextField(default='', verbose_name='Текст заметки')
     date_add = models.TimeField(auto_now_add=True, verbose_name="Дата создания")
@@ -19,3 +19,14 @@ class Note(models.Model):
 
     def __str__(self):
         return f'{self.title}: {self.get_state_display()}'
+
+
+class Comment(models.Model):
+
+    author = models.ForeignKey(User, related_name='authors_comment', on_delete=models.CASCADE)
+    note = models.ForeignKey(Note, related_name='comments', on_delete=models.CASCADE)
+    message = models.TextField(default='', verbose_name='Комментарий заметки')
+    date_add = models.TimeField(auto_now_add=True, verbose_name="Дата создания")
+
+    def __str__(self):
+        return f'{self.message}'
