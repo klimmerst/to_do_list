@@ -14,7 +14,7 @@ class Note(models.Model):
     text = models.TextField(default='', verbose_name='Текст заметки')
     date_add = models.TimeField(auto_now_add=True, verbose_name="Дата создания")
     importance = models.BooleanField(default=False, verbose_name='Важная')
-    privacy = models.BooleanField(default=False, verbose_name='Публичная')
+    public = models.BooleanField(default=False, verbose_name='Публичная')
     state = models.IntegerField(default=0, choices=STATE, verbose_name='Статус состояния')
 
     def __str__(self):
