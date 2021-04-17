@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from rest_framework.fields import ListField, ChoiceField, BooleanField
+from rest_framework.serializers import Serializer
 
 from .models import Note, Comment
 
@@ -24,20 +26,7 @@ class AuthorMiniSerializer(serializers.ModelSerializer):
 class NoteMiniSerializer(serializers.ModelSerializer):
     """Краткая информация по заметке"""
 
-    note_id = serializers.SerializerMethodField('get_note_id')
-    def get_note_id(self, obj):
-        return obj.pk
-
-    # Закомментировал код ниже, потому что он больле не нужен: вспомнил, что author_id и так есть в БД,
-    # также понял, что username можно достать через obj.author.username. Но таки интересно почему f-строка
-    # так себя ведёт -- на f'obj.author' выдаёт username, а без f'' DEBUG выдаёт:
-    # "Object of type User is not JSON serializable"
-
-    # author_id = serializers.SerializerMethodField('get_author_id')
-    # def get_author_id(self, obj):
-    #     return obj.author_id  # Если тут прописать f'{obj.author}', то он выдаст "klimmerst2" - не понимаю
-                                # почему, ведь obj это экземпляр Note, значит надо смотреть
-                                # в blog_note, а там нет такого поля как author.
+    note_id = serializers.IntegerField(source='id')
 
     class Meta:
         model = Note
@@ -47,10 +36,7 @@ class NoteMiniSerializer(serializers.ModelSerializer):
 class CommentMiniSerializer(serializers.ModelSerializer):
     """Краткая информацию по комментарию"""
 
-    comment_id = serializers.SerializerMethodField('get_comment_id')
-
-    def get_comment_id(self, obj):
-        return obj.pk
+    comment_id = serializers.IntegerField(source='id')
 
     class Meta:
         model = Comment
@@ -72,16 +58,8 @@ class AllCommentsSerializer(serializers.ModelSerializer):
     """Полная информация по всем комментариям и краткая по заметкам"""
 
     note = NoteMiniSerializer(read_only=True)
-
-    comment_id = serializers.SerializerMethodField('get_comment_id')
-
-    def get_comment_id(self, obj):
-        return obj.pk
-
-    author = serializers.SerializerMethodField('get_username')
-
-    def get_username(self, obj):
-        return obj.author.username
+    comment_id = serializers.IntegerField(source='id')
+    author = serializers.SlugRelatedField(slug_field='username', read_only=True)
 
     class Meta:
         model = Comment
@@ -99,15 +77,11 @@ class AllNotesSerializer(serializers.ModelSerializer):
     def get_state(self, obj):
         return obj.get_state_display()
 
-    note_id = serializers.SerializerMethodField('get_note_id')
-
-    def get_note_id(self, obj):
-        return obj.pk
+    note_id = serializers.IntegerField(source='id')
 
     class Meta:
         model = Note
         fields = ('note_id', 'author_id', 'author', 'title', 'date_add', 'importance', 'state', 'public', 'comments')
-        # read_only_field = ( )
 
 
 class SingleNoteSerializer(serializers.ModelSerializer):
@@ -125,3 +99,9 @@ class SingleNoteSerializer(serializers.ModelSerializer):
         model = Note
         fields = ('author', 'title', 'text', 'date_add', 'importance', 'state', 'public', 'comments', )
         read_only_field = ('author', )
+
+
+class QuerySerializer(Serializer):
+    state = ListField(child=ChoiceField(choices=Note.STATE), required=False)
+    importance = BooleanField()
+    public = BooleanField()
