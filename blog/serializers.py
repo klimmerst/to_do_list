@@ -12,7 +12,6 @@ class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'date_joined', )
-        # readonly_field = ('', )
 
 
 class AuthorMiniSerializer(serializers.ModelSerializer):
