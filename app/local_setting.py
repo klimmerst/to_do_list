@@ -1,5 +1,0 @@
-AUTH_PASSWORD_VALIDATORS = []
-ALLOWED_HOST = ['*']
-SERVER = '0.1'
-# USE_TZ = True
-# TIME_ZONE = 'Europe/Moscow'
