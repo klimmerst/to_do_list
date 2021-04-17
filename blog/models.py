@@ -4,6 +4,10 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
+def time_now():
+    return datetime.now() + timedelta(days=1)
+
+
 class Note(models.Model):
     STATE = (
         (0, "Активно"),
@@ -14,7 +18,7 @@ class Note(models.Model):
     author = models.ForeignKey(User, related_name='authors_note', on_delete=models.PROTECT)
     title = models.CharField(max_length=255, verbose_name="Заголовок")
     text = models.TextField(default='', verbose_name='Текст заметки')
-    date_add = models.TimeField(default=datetime.now() + timedelta(days=1), verbose_name="Дата создания")
+    date_add = models.TimeField(default=time_now, verbose_name="Дата создания")
     importance = models.BooleanField(default=False, verbose_name='Важная')
     public = models.BooleanField(default=False, verbose_name='Публичная')
     state = models.IntegerField(default=0, choices=STATE, verbose_name='Статус состояния')
