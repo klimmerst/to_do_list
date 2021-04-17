@@ -22,7 +22,7 @@ class NoteAdmin(admin.ModelAdmin):
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('id', 'author', 'message', 'date_add', 'note', )
     fields = ('message', 'note', )
-    readonly_fields = ('date_add', )
+    readonly_fields = ('date_add', 'author')
 
     def save_model(self, request, obj, form, change):
         if not hasattr(obj, "author") or not obj.author:
