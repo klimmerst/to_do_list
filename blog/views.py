@@ -34,16 +34,12 @@ class AllNotesView(APIView):
         if query_params.is_valid():
 
             if query_params.data.get('state'):
-                q_state = Q()
-                for state in query_params.data['state']:
-                    q_state |= Q(state=state)
+                notes = notes.filter(state__in=query_params.data['state'])
 
-                notes = notes.filter(q_state)
-
-            if 'importance' in request.query_params:
+            if query_params.data.get('importance'):
                 notes = notes.filter(importance=query_params.data['importance'])
 
-            if 'public' in request.query_params:
+            if query_params.data.get('public'):
                 notes = notes.filter(public=query_params.data['public'])
 
         else:
