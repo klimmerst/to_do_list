@@ -7,6 +7,6 @@ app_name = 'blog'
 urlpatterns = [
     path('note/', AllNotesView.as_view(), name='notes'),
     path('note/<int:note_id>', SingleNoteView.as_view(), name='single_note'),
-    path('comment/', AllCommentsView.as_view(), name='notes'),
-    path('comment/<int:comment_id>', SingleCommentView.as_view(), name='single_note'),
+    path('comment/', AllCommentsView.as_view(), name='comments'),
+    path('comment/<int:comment_id>', SingleCommentView.as_view(), name='single_comment'),
 ]
